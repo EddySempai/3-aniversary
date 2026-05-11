@@ -4,8 +4,25 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import TypewriterTitle from './TypewriterTitle';
 import './MusicPlayer.css';
-import song from '../music/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video) [kPa7bsKwL-c].mp3';
 import cover from '../music/Portada de la musica.png';
+
+import song1 from '../music/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video) [kPa7bsKwL-c].mp3';
+import song2 from '../music/Elvis Presley - Can\'t Help Falling In Love (Official Audio) [vGJTaP6anOU].mp3';
+import song3 from '../music/Risk It All [BF2_ipR1OI0].mp3';
+import song4 from '../music/Stromae, Pomme - “Ma Meilleure Ennemie” (from Arcane Season 2) [Official Music Video] [j-RpvIuazmc].mp3';
+import song5 from '../music/The Weeknd - Out of Time [2fDzCWNS3ig].mp3';
+import song6 from '../music/The Weeknd, Ariana Grande - Die For You (Remix _ Lyric Video) [YQ-qToZUybM].mp3';
+import song7 from '../music/Yes or No [uOFIcm-L0po].mp3';
+
+const playlist = [
+  { title: "Die With A Smile", artist: "Lady Gaga & Bruno Mars", file: song1 },
+  { title: "Can't Help Falling In Love", artist: "Elvis Presley", file: song2 },
+  { title: "Risk It All", artist: "Music", file: song3 },
+  { title: "Ma Meilleure Ennemie", artist: "Stromae, Pomme", file: song4 },
+  { title: "Out of Time", artist: "The Weeknd", file: song5 },
+  { title: "Die For You (Remix)", artist: "The Weeknd & Ariana Grande", file: song6 },
+  { title: "Yes or No", artist: "Music", file: song7 }
+];
 
 const NUM_BARS = 41;
 // Heights to form a heart shape (0-100 scale)
@@ -19,8 +36,27 @@ const MusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(251); // Fallback to 251
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const currentSong = playlist[currentSongIndex];
   const playerRef = useRef(null);
   const audioRef = useRef(null);
+
+  const handleNextSong = () => {
+    setCurrentSongIndex((prev) => (prev + 1) % playlist.length);
+  };
+
+  const handlePrevSong = () => {
+    setCurrentSongIndex((prev) => (prev - 1 + playlist.length) % playlist.length);
+  };
+
+  useEffect(() => {
+    if (isPlaying && audioRef.current) {
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(err => console.log("Play failed", err));
+      }
+    }
+  }, [currentSongIndex]);
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -137,10 +173,10 @@ const MusicPlayer = () => {
       {/* Audio Element */}
       <audio 
         ref={audioRef} 
-        src={song} 
+        src={currentSong.file} 
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={handleNextSong}
       />
 
       {/* Floating Control in corner */}
@@ -168,8 +204,8 @@ const MusicPlayer = () => {
           
           <div className="player-controls">
             <div className="song-info">
-              <h3>Die With A Smile</h3>
-              <p>Bruno Mars & Lady Gaga</p>
+              <h3>{currentSong.title}</h3>
+              <p>{currentSong.artist}</p>
               <HeartIcon className="heart-icon" size={20} fill="var(--color-primary)" color="var(--color-primary)" />
             </div>
             
@@ -182,11 +218,11 @@ const MusicPlayer = () => {
             </div>
             
             <div className="buttons">
-              <button className="control-btn"><SkipBack size={24} /></button>
+              <button className="control-btn" onClick={handlePrevSong}><SkipBack size={24} /></button>
               <button className="play-btn" onClick={togglePlay}>
                 {isPlaying ? <Pause size={32} fill="white" /> : <Play size={32} fill="white" className="play-icon-fix" />}
               </button>
-              <button className="control-btn"><SkipForward size={24} /></button>
+              <button className="control-btn" onClick={handleNextSong}><SkipForward size={24} /></button>
             </div>
           </div>
         </div>
