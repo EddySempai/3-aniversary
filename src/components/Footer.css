@@ -1,0 +1,90 @@
+.footer-section {
+  position: relative;
+  background-color: var(--color-background);
+  background-image: radial-gradient(circle at center, rgba(230, 168, 177, 0.1) 0%, transparent 70%);
+  padding-top: 60px;
+}
+
+.letter-card {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 50px;
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.letter-title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin-bottom: 25px;
+}
+
+.letter-text {
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: var(--color-text);
+  margin-bottom: 30px;
+  min-height: 160px;
+}
+
+.letter-signature {
+  font-size: 1.2rem;
+  color: var(--color-text);
+}
+
+.letter-signature strong {
+  font-family: 'Dancing Script', cursive;
+  font-size: 3.5rem;
+  color: var(--color-primary);
+  font-weight: 700;
+  display: inline-block;
+  padding-right: 15px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  transform: rotate(-3deg);
+  margin-top: 10px;
+}
+
+/* Cursor effect for typewriter */
+.letter-text::after {
+  content: '|';
+  margin-left: 2px;
+  color: var(--color-primary);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 30px 20px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  margin-top: 40px;
+}
+
+.footer-bottom p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 5px;
+}
+
+.footer-date {
+  font-size: 0.85rem !important;
+  color: #aaa !important;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 600px) {
+  .letter-card {
+    padding: 30px 20px;
+  }
+}
