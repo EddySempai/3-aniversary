@@ -5,8 +5,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Heart, X } from 'lucide-react';
 import TypewriterTitle from './TypewriterTitle';
 import './Timeline.css';
+import { TextPlugin } from 'gsap/TextPlugin';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
 const images = import.meta.glob('../History/*.jpg', { eager: true });
 
@@ -77,6 +78,7 @@ const Timeline = () => {
   const container = useRef(null);
   const [activePhoto, setActivePhoto] = useState(null);
   const modalPhotoRef = useRef(null);
+  const [anniversaryEvent, setAnniversaryEvent] = useState(null);
 
   useGSAP(() => {
     // Animate the line using scaleY for better performance and to ensure it renders correctly
@@ -172,6 +174,20 @@ const Timeline = () => {
         }
       );
     });
+
+    // Triggers for Anniversaries
+    ScrollTrigger.create({
+      trigger: '.anniversary-trigger-1',
+      start: 'top 75%',
+      onEnter: () => setAnniversaryEvent({ text: "1 ANIVERSARIO JUNTOS" }),
+    });
+
+    ScrollTrigger.create({
+      trigger: '.anniversary-trigger-2',
+      start: 'top 75%',
+      onEnter: () => setAnniversaryEvent({ text: "2 ANIVERSARIO JUNTOS" }),
+    });
+
   }, { scope: container });
 
   // Generate random positions for floating hearts once
@@ -192,6 +208,56 @@ const Timeline = () => {
     setActivePhoto(null);
     document.body.style.overflow = '';
   };
+
+  const createHeartExplosion = () => {
+    const container = document.querySelector('.anniversary-overlay');
+    if (!container) return;
+    
+    for (let i = 0; i < 50; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'explosion-heart';
+      heart.innerHTML = '❤️';
+      heart.style.position = 'absolute';
+      heart.style.top = '50%';
+      heart.style.left = '50%';
+      container.appendChild(heart);
+      
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * 300 + 100;
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+      
+      gsap.to(heart, {
+        x: x,
+        y: y,
+        opacity: 0,
+        scale: Math.random() * 2 + 0.5,
+        duration: Math.random() * 2 + 2,
+        ease: 'power2.out',
+        onComplete: () => heart.remove()
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (anniversaryEvent) {
+      // Typewriter effect
+      gsap.fromTo('.anniversary-typewriter', 
+        { text: "" },
+        { text: anniversaryEvent.text, duration: 2, ease: "none" }
+      );
+      
+      // Heart explosion
+      createHeartExplosion();
+      
+      // Auto close
+      const timer = setTimeout(() => {
+        setAnniversaryEvent(null);
+      }, 4000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [anniversaryEvent]);
 
   const handleMouseMove = (e) => {
     if (!modalPhotoRef.current) return;
@@ -261,7 +327,7 @@ const Timeline = () => {
         {milestones.map((milestone, index) => {
           const isLeft = index % 2 === 0;
           return (
-            <div key={milestone.id} className={`timeline-item ${isLeft ? 'left' : 'right'}`}>
+            <div key={milestone.id} className={`timeline-item ${isLeft ? 'left' : 'right'} ${milestone.title === "Feliz Primer Año Juntos" ? 'anniversary-trigger-1' : ''} ${milestone.title === "Segundo Aniversario, Te Amo" ? 'anniversary-trigger-2' : ''}`}>
               <div className="timeline-dot"></div>
               
               <div className="timeline-content glass">
@@ -315,6 +381,12 @@ const Timeline = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+      {/* Anniversary Overlay */}
+      {anniversaryEvent && (
+        <div className="anniversary-overlay">
+          <h1 className="anniversary-typewriter">{anniversaryEvent.text}</h1>
         </div>
       )}
     </section>
