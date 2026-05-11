@@ -7,12 +7,22 @@ import './Gallery.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const images = [
-  { id: 1, src: '/gallery_sunset_1777576125396.png', className: 'tall' },
-  { id: 2, src: '/gallery_hands_1777576098411.png', className: 'wide' },
-  { id: 3, src: '/gallery_coffee_1777576113032.png', className: 'small' },
-  { id: 4, src: '/timeline_trip_1777576085342.png', className: 'big' },
-];
+const imagesGlob = import.meta.glob('../History/*.jpg', { eager: true });
+
+const bentoClasses = ['small', 'wide', 'tall', 'big', 'small', 'tall', 'wide', 'small', 'big', 'small'];
+
+const images = Object.keys(imagesGlob).map((key, index) => {
+  const file = key.split('/').pop();
+  const title = file.replace('.jpg', '');
+  const className = bentoClasses[index % bentoClasses.length];
+  
+  return {
+    id: index + 1,
+    src: imagesGlob[key]?.default || imagesGlob[key],
+    className: className,
+    title: title
+  };
+});
 
 const Gallery = () => {
   const galleryRef = useRef();

@@ -8,40 +8,70 @@ import './Timeline.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const milestones = [
-  {
-    id: 1,
-    title: "Nuestro primer viaje",
-    date: "14 de Febrero, 2023",
-    image: "/timeline_trip_1777576085342.png",
-    description: "El inicio de nuestras aventuras por el mundo.",
-    quote: '"El mundo es demasiado hermoso para viajar por él sin ti."'
-  },
-  {
-    id: 2,
-    title: "Un café juntos",
-    date: "20 de Mayo, 2023",
-    image: "/gallery_coffee_1777576113032.png",
-    description: "Tardes enteras hablando de nuestros sueños.",
-    quote: '"El amor, como un buen café, se disfruta sorbo a sorbo y sin prisa."'
-  },
-  {
-    id: 3,
-    title: "Atardecer inolvidable",
-    date: "10 de Agosto, 2024",
-    image: "/gallery_sunset_1777576125396.png",
-    description: "Caminando juntos bajo el cielo de colores.",
-    quote: '"Incluso el sol se detiene a admirar lo nuestro antes de ocultarse."'
-  },
-  {
-    id: 4,
-    title: "De la mano, siempre",
-    date: "Hoy y siempre",
-    image: "/gallery_hands_1777576098411.png",
-    description: "Sosteniendo mi mundo entero en tus manos.",
-    quote: '"Mientras nuestras manos estén entrelazadas, no hay camino imposible."'
-  }
+const images = import.meta.glob('../History/*.jpg', { eager: true });
+
+const rawMilestones = [
+  { file: "Primera cita.jpg", title: "Nuestra Primera Cita", phrase: "El comienzo de todo." },
+  { file: "Mi primer dibujo a ti.jpg", title: "Mi Primer Dibujo Para Ti", phrase: "Un detalle con el corazón." },
+  { file: "Nuestro primer mes.jpg", title: "Nuestro Primer Mes", phrase: "Un mes de pura felicidad." },
+  { file: "mi primer cumple junto a ti.jpg", title: "Mi Primer Cumpleaños Contigo", phrase: "Celebrando la vida a tu lado." },
+  { file: "Cita de los 3 meses.jpg", title: "Cita de los 3 Meses", phrase: "Tres meses llenos de amor." },
+  { file: "Nuestra primera aventura (sale mal).jpg", title: "Nuestra Primera Aventura (Sale Mal)", phrase: "Risas que superan cualquier imprevisto." },
+  { file: "cita de los 5 mese.jpg", title: "Cita de los 5 Meses", phrase: "Cinco meses construyendo algo hermoso." },
+  { file: "cita de los 6 meses.jpg", title: "Cita de los 6 Meses", phrase: "Medio año de pura magia." },
+  { file: "Nuestro primer concierto juntos.jpg", title: "Nuestro Primer Concierto Juntos", phrase: "Cantando a todo pulmón." },
+  { file: "Nuestra primera navidad juntos.jpg", title: "Nuestra Primera Navidad Juntos", phrase: "La mejor época del año contigo." },
+  { file: "Nuestro primer fin de años juntos.jpg", title: "Nuestro Primer Fin de Año Juntos", phrase: "Recibiendo el año con el mejor abrazo." },
+  { file: "Cita en el cine.jpg", title: "Cita en el Cine", phrase: "Pelis, palomitas y tu compañía." },
+  { file: "San valentin.jpg", title: "San Valentín", phrase: "El amor en su máxima expresión." },
+  { file: "Tu primer Cumpleaños juntos.jpg", title: "Tu Primer Cumpleaños Juntos", phrase: "Tu día especial, el más feliz para mí." },
+  { file: "Cita en el parque.jpg", title: "Cita en el Parque", phrase: "Tardes tranquilas que valen oro." },
+  { file: "Feliz primer año junto.jpg", title: "Feliz Primer Año Juntos", phrase: "Un año de amor inolvidable." },
+  { file: "Sacando el pasaporte.jpg", title: "Sacando el Pasaporte", phrase: "Listos para recorrer el mundo." },
+  { file: "A por un helado.jpg", title: "A por un Helado", phrase: "Momentos dulces como tú." },
+  { file: "mis primeras rosas, gracias amor.jpg", title: "Mis Primeras Rosas, Gracias Amor", phrase: "Un detalle que florece en mi corazón." },
+  { file: "Mi segundo cumple contigo.jpg", title: "Mi Segundo Cumpleaños Contigo", phrase: "Otro año celebrando tu vida." },
+  { file: "Nos mudamos juntos.jpg", title: "Nos Mudamos Juntos", phrase: "Nuestro propio espacio, nuestro hogar." },
+  { file: "Nuesto primer viaje juntos.jpg", title: "Nuestro Primer Viaje Juntos", phrase: "Descubriendo nuevos lugares de la mano." },
+  { file: "A las montañas.jpg", title: "A las Montañas", phrase: "Tocando el cielo contigo." },
+  { file: "salida  a la picina.jpg", title: "Salida a la Piscina", phrase: "Días de sol y diversión." },
+  { file: "celebrando juntos mas timepo junto.jpg", title: "Celebrando Juntos Más Tiempo", phrase: "Brindando por nuestro amor." },
+  { file: "cita en los videogames.jpg", title: "Cita en los Videojuegos", phrase: "Jugando y ganando en el amor." },
+  { file: "videojuegos parte 2.jpg", title: "Videojuegos Parte 2", phrase: "La revancha más divertida." },
+  { file: "segunda navidad juntos.jpg", title: "Segunda Navidad Juntos", phrase: "Navidad brilla más a tu lado." },
+  { file: "cita en el rio.jpg", title: "Cita en el Río", phrase: "Naturaleza y amor en sintonía." },
+  { file: "segundo años nuevo juntos.jpg", title: "Segundo Año Nuevo Juntos", phrase: "Otro año que empieza perfecto." },
+  { file: "segundo san valentin juntos.jpg", title: "Segundo San Valentín Juntos", phrase: "Reafirmando lo que sentimos." },
+  { file: "Tu segundo cumpelaños.jpg", title: "Tu Segundo Cumpleaños", phrase: "Celebrando tu existencia." },
+  { file: "pa la playa juntitos.jpg", title: "Pa' la Playa Juntitos", phrase: "Sol, arena y tú." },
+  { file: "Segunda cita en el parque.jpg", title: "Segunda Cita en el Parque", phrase: "Volviendo a nuestros lugares favoritos." },
+  { file: "segundo aniversario te amo.jpg", title: "Segundo Aniversario, Te Amo", phrase: "Dos años de amarte cada día más." },
+  { file: "Juntos avanzamos en el gym.jpg", title: "Juntos Avanzamos en el Gym", phrase: "Entrenando cuerpo y alma." },
+  { file: "Feliz dia de las flores amarillas.jpg", title: "Feliz Día de las Flores Amarillas", phrase: "Un detalle para la más hermosa." },
+  { file: "viaje al zoologico.jpg", title: "Viaje al Zoológico", phrase: "Conociendo el mundo animal juntos." },
+  { file: "vamos a las picina parte 2.jpg", title: "Vamos a la Piscina Parte 2", phrase: "Más momentos refrescantes." },
+  { file: "se acerca navidad y ya me dieron mi regalo.jpg", title: "Se Acerca Navidad", phrase: "El mejor regalo eres tú." },
+  { file: "tercera navidad juntos.jpg", title: "Tercera Navidad Juntos", phrase: "Tradiciones que amamos." },
+  { file: "A un 15 años vamos.jpg", title: "A un 15 Años Vamos", phrase: "De fiesta y elegantes." },
+  { file: "tercer año nuevo juntos vamos por mas.jpg", title: "Tercer Año Nuevo Juntos", phrase: "Tres años iniciando juntos." },
+  { file: "al rio parte 3.jpg", title: "Al Río Parte 3", phrase: "Nuestros paseos favoritos." },
+  { file: "tercer Cumple juntos.jpg", title: "Tercer Cumpleaños Juntos", phrase: "Tres años celebrando tu vida." },
+  { file: "pa la playa juntitos parte 2.jpg", title: "Pa' la Playa Juntitos Parte 2", phrase: "Siempre con ganas de volver al mar." }
 ];
+
+const milestones = rawMilestones.map((item, index) => {
+  const imagePath = `../History/${item.file}`;
+  const resolvedImage = images[imagePath]?.default || images[imagePath];
+  
+  return {
+    id: index + 1,
+    title: item.title,
+    date: `Paso ${index + 1}`,
+    image: resolvedImage,
+    description: item.phrase,
+    quote: `"${item.phrase}"`
+  };
+});
 
 const Timeline = () => {
   const container = useRef(null);
@@ -145,7 +175,7 @@ const Timeline = () => {
   }, { scope: container });
 
   // Generate random positions for floating hearts once
-  const floatingHearts = useMemo(() => Array.from({ length: 15 }).map((_, i) => ({
+  const floatingHearts = useMemo(() => Array.from({ length: 100 }).map((_, i) => ({
     id: i,
     top: `${Math.random() * 100}%`,
     left: `${Math.random() * 100}%`,

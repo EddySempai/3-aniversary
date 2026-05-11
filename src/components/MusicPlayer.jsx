@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Heart as HeartIcon } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Heart as HeartIcon, Music, VolumeX } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import TypewriterTitle from './TypewriterTitle';
 import './MusicPlayer.css';
+import song from '../music/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video) [kPa7bsKwL-c].mp3';
+import cover from '../music/Portada de la musica.png';
 
 const NUM_BARS = 41;
 // Heights to form a heart shape (0-100 scale)
@@ -16,31 +18,45 @@ const heartHeights = [
 const MusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(251); // Fallback to 251
   const playerRef = useRef(null);
-  const progressInterval = useRef(null);
+  const audioRef = useRef(null);
 
   const togglePlay = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(err => console.log("Play failed", err));
+    }
     setIsPlaying(!isPlaying);
   };
 
-  useEffect(() => {
-    if (isPlaying) {
-      // 4:11 = 251 seconds
-      progressInterval.current = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            setIsPlaying(false);
-            return 0;
-          }
-          return prev + (100 / 251); 
-        });
-      }, 1000);
-    } else {
-      clearInterval(progressInterval.current);
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      const current = audioRef.current.currentTime;
+      const dur = audioRef.current.duration;
+      setProgress((current / dur) * 100);
     }
+  };
 
-    return () => clearInterval(progressInterval.current);
-  }, [isPlaying]);
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  useEffect(() => {
+    // Attempt autoplay on mount
+    const playAudio = async () => {
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.log("Autoplay blocked or failed", err);
+      }
+    };
+    playAudio();
+  }, []);
 
   const recordTween = useRef(null);
   const waveTimeout = useRef(null);
@@ -106,14 +122,31 @@ const MusicPlayer = () => {
     updatePlayState(isPlaying);
   }, [isPlaying]);
 
-  // Calculate formatted time based on progress
-  const currentSeconds = Math.floor((progress / 100) * 251);
+  // Calculate formatted time
+  const currentSeconds = Math.floor((progress / 100) * duration);
   const currentMins = Math.floor(currentSeconds / 60);
   const currentSecs = currentSeconds % 60;
+  
+  const durMins = Math.floor(duration / 60);
+  const durSecs = Math.floor(duration % 60);
 
   return (
     <section className="section music-section" ref={playerRef}>
       <TypewriterTitle text="Nuestra Canción" />
+      
+      {/* Audio Element */}
+      <audio 
+        ref={audioRef} 
+        src={song} 
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => setIsPlaying(false)}
+      />
+
+      {/* Floating Control in corner */}
+      <div className="floating-music-control" onClick={togglePlay}>
+        {isPlaying ? <Music size={24} color="var(--color-primary)" /> : <VolumeX size={24} color="var(--color-primary)" />}
+      </div>
       
       {/* Sound Waves Background */}
       <div className="sound-waves-bg">
@@ -128,7 +161,7 @@ const MusicPlayer = () => {
         <div className="player-container glass">
           <div className="album-art">
             <div className={`record-wrapper ${isPlaying ? 'playing' : ''}`}>
-               <img src="/gallery_hands_1777576098411.png" alt="Album Cover" className="record-image" />
+               <img src={cover} alt="Album Cover" className="record-image" />
                <div className="record-hole"></div>
             </div>
           </div>
@@ -145,7 +178,7 @@ const MusicPlayer = () => {
               <div className="progress-bar">
                 <div className="progress" style={{ width: `${progress}%` }}></div>
               </div>
-              <span className="time">4:11</span>
+              <span className="time">{durMins}:{durSecs.toString().padStart(2, '0')}</span>
             </div>
             
             <div className="buttons">
