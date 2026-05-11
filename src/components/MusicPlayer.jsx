@@ -81,6 +81,16 @@ const MusicPlayer = () => {
     }
   };
 
+  const handleProgressClick = (e) => {
+    if (!audioRef.current || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const newProgressRatio = clickX / rect.width;
+    
+    audioRef.current.currentTime = newProgressRatio * duration;
+    setProgress(newProgressRatio * 100);
+  };
+
   useEffect(() => {
     // Attempt autoplay on mount
     const playAudio = async () => {
@@ -158,13 +168,16 @@ const MusicPlayer = () => {
     updatePlayState(isPlaying);
   }, [isPlaying]);
 
-  // Calculate formatted time
-  const currentSeconds = Math.floor((progress / 100) * duration);
-  const currentMins = Math.floor(currentSeconds / 60);
-  const currentSecs = currentSeconds % 60;
+  // Calculate formatted time safely
+  const safeProgress = isNaN(progress) ? 0 : progress;
+  const safeDuration = isNaN(duration) ? 0 : duration;
   
-  const durMins = Math.floor(duration / 60);
-  const durSecs = Math.floor(duration % 60);
+  const currentSeconds = Math.floor((safeProgress / 100) * safeDuration) || 0;
+  const currentMins = Math.floor(currentSeconds / 60) || 0;
+  const currentSecs = currentSeconds % 60 || 0;
+  
+  const durMins = Math.floor(safeDuration / 60) || 0;
+  const durSecs = Math.floor(safeDuration % 60) || 0;
 
   return (
     <section className="section music-section" ref={playerRef}>
@@ -205,13 +218,13 @@ const MusicPlayer = () => {
           <div className="player-controls">
             <div className="song-info">
               <h3>{currentSong.title}</h3>
-              <p>{currentSong.artist}</p>
+              <p>{currentSong.artist} • Pista {currentSongIndex + 1} de {playlist.length}</p>
               <HeartIcon className="heart-icon" size={20} fill="var(--color-primary)" color="var(--color-primary)" />
             </div>
             
             <div className="progress-bar-container">
               <span className="time">{currentMins}:{currentSecs.toString().padStart(2, '0')}</span>
-              <div className="progress-bar">
+              <div className="progress-bar" onClick={handleProgressClick}>
                 <div className="progress" style={{ width: `${progress}%` }}></div>
               </div>
               <span className="time">{durMins}:{durSecs.toString().padStart(2, '0')}</span>
