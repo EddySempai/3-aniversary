@@ -14,16 +14,19 @@
 
 .sound-waves-bg {
   position: absolute;
-  top: 55%;
-  left: 5rem;
-  right: 5rem;
-  transform: translateY(-50%);
-  height: 400px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
+  opacity: 0.5; /* Slight opacity since it's inside the card now */
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 .sound-bar-container {
@@ -50,6 +53,8 @@
   border-radius: 30px;
   max-width: 700px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .album-art {
@@ -210,11 +215,6 @@
   }
   .player-controls {
     width: 100%;
-  }
-  .sound-waves-bg {
-    left: 1rem;
-    right: 1rem;
-    height: 200px;
   }
   .album-art {
     width: 150px;

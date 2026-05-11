@@ -148,17 +148,17 @@ const MusicPlayer = () => {
         {isPlaying ? <Music size={24} color="var(--color-primary)" /> : <VolumeX size={24} color="var(--color-primary)" />}
       </div>
       
-      {/* Sound Waves Background */}
-      <div className="sound-waves-bg">
-        {Array.from({ length: NUM_BARS }).map((_, i) => (
-          <div key={i} className="sound-bar-container">
-            <div className="sound-bar"></div>
-          </div>
-        ))}
-      </div>
-      
       <div className="player-wrapper">
         <div className="player-container glass">
+          {/* Sound Waves Background moved inside to be bounded by the card */}
+          <div className="sound-waves-bg">
+            {Array.from({ length: NUM_BARS }).map((_, i) => (
+              <div key={i} className="sound-bar-container">
+                <div className="sound-bar"></div>
+              </div>
+            ))}
+          </div>
+
           <div className="album-art">
             <div className={`record-wrapper ${isPlaying ? 'playing' : ''}`}>
                <img src={cover} alt="Album Cover" className="record-image" />
